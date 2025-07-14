@@ -1,7 +1,6 @@
 import os
-
-from master import MasterController
-from slave import SlaveController
+from src.master import MasterController
+from src.slave import SlaveController
 
 ROLE = os.getenv("ROLE", "master")  # 'master' or 'slave'
 MASTER_IP = os.getenv("MASTER_IP", None)
