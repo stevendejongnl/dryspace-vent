@@ -1,4 +1,4 @@
-from machine import PWM, Pin
+from machine import PWM, Pin  # type: ignore[import]
 
 
 class FanDriver:

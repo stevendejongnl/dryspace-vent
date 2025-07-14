@@ -1,4 +1,4 @@
-.PHONY: venv-create venv-activate install add test flash mpremote-install upload reset
+.PHONY: venv-create venv-activate install add test flash mpremote-install upload reset black flake8 mypy install-lint
 
 venv-create:
 	python -m venv .venv
@@ -56,3 +56,15 @@ endif
 
 reset:
 	mpremote connect $(PORT) reset
+
+black:
+	.venv/bin/black .
+
+flake8:
+	.venv/bin/flake8 . --exclude=.venv,site-packages --ignore=E501,W503
+
+mypy:
+	.venv/bin/mypy .
+
+install-lint:
+	.venv/bin/pip install black flake8 mypy
