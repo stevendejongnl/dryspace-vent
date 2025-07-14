@@ -33,10 +33,26 @@ flash:
 mpremote-install:
 	pip install --user mpremote
 
-upload:
+upload-master:
 	mpremote connect $(PORT) fs cp main.py :main.py
+	mpremote connect $(PORT) fs cp master.py :master.py
 	mpremote connect $(PORT) fs cp controller.py :controller.py
 	mpremote connect $(PORT) fs cp driver.py :driver.py
+	mpremote connect $(PORT) fs cp slave.py :slave.py
+	mpremote connect $(PORT) fs cp slave.py :slave.py
+	mpremote connect $(PORT) shell setenv ROLE master
+
+upload-slave:
+ifndef MASTER_IP
+	$(error Please provide MASTER_IP: make upload-slave MASTER_IP=192.168.1.100)
+endif
+	mpremote connect $(PORT) fs cp main.py :main.py
+	mpremote connect $(PORT) fs cp slave.py :slave.py
+	mpremote connect $(PORT) fs cp controller.py :controller.py
+	mpremote connect $(PORT) fs cp driver.py :driver.py
+	mpremote connect $(PORT) fs cp master.py :master.py
+	mpremote connect $(PORT) shell setenv ROLE slave
+	mpremote connect $(PORT) shell setenv MASTER_IP $(MASTER_IP)
 
 reset:
 	mpremote connect $(PORT) reset

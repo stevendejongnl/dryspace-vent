@@ -1,25 +1,17 @@
-import time
+import os
 
-import dht
-from machine import Pin
+ROLE = os.getenv('ROLE', 'master')  # 'master' or 'slave'
+MASTER_IP = os.getenv('MASTER_IP', None)
 
-from controller import FanController
-from driver import FanDriver
+if ROLE == 'master':
+    from master import run_master
 
-fan = FanDriver(pwm_pin=18)
-controller = FanController()
-sensor = dht.DHT22(Pin(4))
+    run_master()
+elif ROLE == 'slave':
+    from slave import run_slave
 
-# Dummy remote humidity value (replace with MQTT or ESP-NOW data)
-remote_humidity = 55.0
-
-while True:
-    try:
-        sensor.measure()
-        local_humidity = sensor.humidity()
-        duty = controller.determine_duty_cycle(local_humidity, remote_humidity)
-        fan.set_speed(duty)
-        print("Local humidity:", local_humidity, "| Duty cycle:", duty)
-    except Exception as e:
-        print("Sensor error:", e)
-    time.sleep(5)
+    if not MASTER_IP:
+        raise ValueError("MASTER_IP environment variable is required for slave role")
+    run_slave(MASTER_IP)
+else:
+    raise ValueError("Unknown ROLE: {}".format(ROLE))
