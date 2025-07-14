@@ -63,7 +63,11 @@ flake8:
 	.venv/bin/flake8 . --exclude=.venv,site-packages --ignore=E501,W503
 
 mypy:
-	.venv/bin/mypy .
+	.venv/bin/mypy src
+	.venv/bin/mypy scripts
 
 install-lint:
 	.venv/bin/pip install black flake8 mypy
+
+config:
+	python3 scripts/config_wizard.py

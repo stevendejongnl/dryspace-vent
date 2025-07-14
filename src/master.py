@@ -14,8 +14,8 @@ class MasterController:
         fan_driver_cls=None,
         fan_controller_cls=None,
     ):
-        from driver import FanDriver
-        from controller import FanController
+        from src.driver import FanDriver
+        from src.controller import FanController
 
         self.udp_ip = udp_ip
         self.udp_port = udp_port

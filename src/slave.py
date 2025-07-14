@@ -1,8 +1,6 @@
-import socket
 import time
 import dht  # type: ignore[import]
 from machine import Pin  # type: ignore[import]
-from driver import FanDriver
 
 
 class SlaveController:
@@ -17,15 +15,16 @@ class SlaveController:
         socket_cls=None,
         fan_driver_cls=None,
     ):
-        if dht_cls is None or pin_cls is None:
+        if dht_cls is None:
             dht_cls = dht.DHT22
+        if pin_cls is None:
             pin_cls = Pin
         if socket_cls is None:
             import socket
 
             socket_cls = socket.socket
         if fan_driver_cls is None:
-            from driver import FanDriver
+            from src.driver import FanDriver
 
             fan_driver_cls = FanDriver
         self.master_ip = master_ip

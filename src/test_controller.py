@@ -1,6 +1,6 @@
 import pytest
 
-from controller import FanController
+from src.controller import FanController
 
 
 @pytest.fixture
