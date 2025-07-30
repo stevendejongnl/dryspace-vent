@@ -34,23 +34,23 @@ mpremote-install:
 	pip install --user mpremote
 
 upload-master:
-mpremote connect $(PORT) fs cp src/main.py :main.py
-mpremote connect $(PORT) fs cp src/master.py :master.py
-mpremote connect $(PORT) fs cp src/controller.py :controller.py
-mpremote connect $(PORT) fs cp src/driver.py :driver.py
-mpremote connect $(PORT) fs cp src/slave.py :slave.py
-mpremote connect $(PORT) fs cp src/config.py :config.py
+	mpremote connect $(PORT) fs cp src/main.py :main.py
+	mpremote connect $(PORT) fs cp src/master.py :master.py
+	mpremote connect $(PORT) fs cp src/controller.py :controller.py
+	mpremote connect $(PORT) fs cp src/driver.py :driver.py
+	mpremote connect $(PORT) fs cp src/slave.py :slave.py
+	mpremote connect $(PORT) fs cp src/config.py :config.py
 
 upload-slave:
-ifndef MASTER_IP
-	$(error Please provide MASTER_IP: make upload-slave MASTER_IP=192.168.1.100)
-endif
-mpremote connect $(PORT) fs cp src/main.py :main.py
-mpremote connect $(PORT) fs cp src/slave.py :slave.py
-mpremote connect $(PORT) fs cp src/controller.py :controller.py
-mpremote connect $(PORT) fs cp src/driver.py :driver.py
-mpremote connect $(PORT) fs cp src/master.py :master.py
-mpremote connect $(PORT) fs cp src/config.py :config.py
+	ifndef MASTER_IP
+		$(error Please provide MASTER_IP: make upload-slave MASTER_IP=192.168.1.100)
+	endif
+	mpremote connect $(PORT) fs cp src/main.py :main.py
+	mpremote connect $(PORT) fs cp src/slave.py :slave.py
+	mpremote connect $(PORT) fs cp src/controller.py :controller.py
+	mpremote connect $(PORT) fs cp src/driver.py :driver.py
+	mpremote connect $(PORT) fs cp src/master.py :master.py
+	mpremote connect $(PORT) fs cp src/config.py :config.py
 
 reset:
 	mpremote connect $(PORT) reset
