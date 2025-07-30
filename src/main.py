@@ -1,11 +1,12 @@
 try:
-    from src import config as config
+try:
+    import config as config
 except ImportError:
-    from src import config_default as config
+    import config_default as config
 import os
-import importlib.util
-from src.master import MasterController
-from src.slave import SlaveController
+import os
+from master import MasterController
+from slave import SlaveController
 
 # Try to load config.py, fallback to config_default.py
 config_path = os.path.join(os.path.dirname(__file__), "config.py")
