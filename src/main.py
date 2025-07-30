@@ -1,3 +1,7 @@
+try:
+    from src import config as config
+except ImportError:
+    from src import config_default as config
 import os
 import importlib.util
 from src.master import MasterController
@@ -5,13 +9,6 @@ from src.slave import SlaveController
 
 # Try to load config.py, fallback to config_default.py
 config_path = os.path.join(os.path.dirname(__file__), "config.py")
-spec = importlib.util.spec_from_file_location("config", config_path)
-if os.path.exists(config_path) and spec is not None and spec.loader is not None:
-    config = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(config)
-else:
-    from src import config_default as config
-
 CONFIG = config.CONFIG
 
 ROLE = CONFIG.get("role", os.getenv("ROLE", "master"))
