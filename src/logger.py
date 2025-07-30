@@ -1,5 +1,6 @@
 def log(msg, level="INFO"):
     import time
+
     try:
         t = time.time()
     except Exception:

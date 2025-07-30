@@ -29,24 +29,28 @@ class MasterController:
 
         # ESP32 WiFi setup (MicroPython)
         try:
-            import network
+            import network  # type: ignore[import]
+
             wlan = network.WLAN(network.STA_IF)
             wlan.active(True)
             if not wlan.isconnected():
-                log('Connecting to WiFi...', 'INFO')
+                log("Connecting to WiFi...", "INFO")
                 wlan.connect(wifi_ssid, wifi_password)
                 timeout = 20
                 while not wlan.isconnected() and timeout > 0:
                     time.sleep(1)
                     timeout -= 1
                 if wlan.isconnected():
-                    log('WiFi connected: {}'.format(wlan.ifconfig()), 'INFO')
+                    log("WiFi connected: {}".format(wlan.ifconfig()), "INFO")
                 else:
-                    log('WiFi connection failed!', 'ERROR')
+                    log("WiFi connection failed!", "ERROR")
             else:
-                log('Already connected to WiFi: {}'.format(wlan.ifconfig()), 'INFO')
+                log("Already connected to WiFi: {}".format(wlan.ifconfig()), "INFO")
         except ImportError:
-            log('network module not available (not running on MicroPython ESP32)', 'WARN')
+            log(
+                "network module not available (not running on MicroPython ESP32)",
+                "WARN",
+            )
 
         from src.driver import FanDriver
         from src.controller import FanController
@@ -68,27 +72,30 @@ class MasterController:
             s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.bind((self.udp_ip, self.http_port))
             s.listen(1)
-            log('HTTP server started on {}:{}'.format(self.udp_ip, self.http_port), 'INFO')
+            log(
+                "HTTP server started on {}:{}".format(self.udp_ip, self.http_port),
+                "INFO",
+            )
             while True:
                 conn, addr = s.accept()
                 req = conn.recv(1024)
-                log('HTTP request from {}: {}'.format(addr, req), 'DEBUG')
+                log("HTTP request from {}: {}".format(addr, req), "DEBUG")
                 if b"GET /api/sensors" in req:
                     resp = json.dumps(self.latest)
                     conn.send(
                         b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n"
                         + resp.encode()
                     )
-                    log('Sent sensor data: {}'.format(resp), 'DEBUG')
+                    log("Sent sensor data: {}".format(resp), "DEBUG")
                 else:
                     conn.send(b"HTTP/1.1 404 Not Found\r\n\r\n")
-                    log('404 Not Found sent to {}'.format(addr), 'WARN')
+                    log("404 Not Found sent to {}".format(addr), "WARN")
                 conn.close()
 
         _thread.start_new_thread(http_server, ())
 
     def run(self):
-        log('MasterController started', 'INFO')
+        log("MasterController started", "INFO")
         self.start_http_server()
         while True:
             try:
@@ -97,16 +104,26 @@ class MasterController:
                     try:
                         humidity = float(data.decode())
                         self.slave_humidities[addr[0]] = humidity
-                        log('Received humidity {:.1f}% from {}'.format(humidity, addr[0]), 'INFO')
+                        log(
+                            "Received humidity {:.1f}% from {}".format(
+                                humidity, addr[0]
+                            ),
+                            "INFO",
+                        )
                     except Exception as e:
-                        log('Invalid data from {}: {}'.format(addr, e), 'ERROR')
+                        log("Invalid data from {}: {}".format(addr, e), "ERROR")
             except Exception as e:
-                log('Socket receive error: {}'.format(e), 'WARN')
+                log("Socket receive error: {}".format(e), "WARN")
             remote_humidity = max(self.slave_humidities.values(), default=0)
             local_humidity = None
             duty = self.controller.determine_duty_cycle(local_humidity, remote_humidity)
             self.fan.set_speed(duty)
-            log('Remote humidity: {:.1f} | Duty cycle: {}'.format(remote_humidity, duty), 'INFO')
+            log(
+                "Remote humidity: {:.1f} | Duty cycle: {}".format(
+                    remote_humidity, duty
+                ),
+                "INFO",
+            )
             self.latest["remote_humidity"] = remote_humidity
             self.latest["local_humidity"] = local_humidity
             self.latest["duty"] = duty

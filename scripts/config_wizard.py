@@ -18,6 +18,7 @@ print("--- dryspace-vent config wizard ---\n")
 for key, value in default_config.CONFIG.items():
     if key in ["wifi_password"]:
         import getpass
+
         prompt = f"{key} [{value}]: "
         user_input = getpass.getpass(prompt)
     else:
