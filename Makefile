@@ -52,6 +52,9 @@ upload-slave:
 	mpremote connect $(PORT) fs cp src/master.py :master.py
 	mpremote connect $(PORT) fs cp src/config.py :config.py
 
+log:
+	mpremote connect $(PORT) repl
+
 reset:
 	mpremote connect $(PORT) reset
 
