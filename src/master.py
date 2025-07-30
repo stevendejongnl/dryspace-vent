@@ -13,7 +13,38 @@ class MasterController:
         pwm_pin=18,
         fan_driver_cls=None,
         fan_controller_cls=None,
+        wifi_ssid=None,
+        wifi_password=None,
     ):
+        # WiFi credentials uit config
+        try:
+            from src.config import CONFIG as USER_CONFIG
+        except ImportError:
+            from src.config_default import CONFIG as USER_CONFIG
+        if wifi_ssid is None:
+            wifi_ssid = USER_CONFIG.get("wifi_ssid", "YOUR_WIFI_SSID")
+        if wifi_password is None:
+            wifi_password = USER_CONFIG.get("wifi_password", "YOUR_WIFI_PASSWORD")
+
+        # ESP32 WiFi setup (MicroPython)
+        try:
+            import network
+            wlan = network.WLAN(network.STA_IF)
+            wlan.active(True)
+            if not wlan.isconnected():
+                print('Connecting to WiFi...')
+                wlan.connect(wifi_ssid, wifi_password)
+                timeout = 20
+                while not wlan.isconnected() and timeout > 0:
+                    time.sleep(1)
+                    timeout -= 1
+                if wlan.isconnected():
+                    print('WiFi connected:', wlan.ifconfig())
+                else:
+                    print('WiFi connection failed!')
+        except ImportError:
+            print('network module not available (not running on MicroPython ESP32)')
+
         from src.driver import FanDriver
         from src.controller import FanController
 

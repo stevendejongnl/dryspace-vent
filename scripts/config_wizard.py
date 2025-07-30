@@ -16,8 +16,13 @@ spec.loader.exec_module(default_config)
 answers = {}
 print("--- dryspace-vent config wizard ---\n")
 for key, value in default_config.CONFIG.items():
-    prompt = f"{key} [{value}]: "
-    user_input = input(prompt)
+    if key in ["wifi_password"]:
+        import getpass
+        prompt = f"{key} [{value}]: "
+        user_input = getpass.getpass(prompt)
+    else:
+        prompt = f"{key} [{value}]: "
+        user_input = input(prompt)
     if user_input.strip() == "":
         answers[key] = value
     else:
